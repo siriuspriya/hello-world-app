@@ -32,11 +32,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Fix target directory permissions (if necessary)
-        run: sudo chown -R ubuntu:${{ secrets.SERVER_IP }} /var/www/html/react-app
-        
-      - name: update permissions
-        run: sudo chmod -R 755 /var/www/html/react-app
-
+        run: ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "sudo chown -R ubuntu:ubuntu /var/www/html/react-app"
 
       - name: Deploy to EC2
         run: |

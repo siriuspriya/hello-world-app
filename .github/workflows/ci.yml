@@ -24,16 +24,14 @@ jobs:
       - name: Build the app
         run: npm run build
 
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd /var/www/html/hello-world-app
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart all
+        run: |
+          rsync -avz --delete client/build/ ubuntu@${{ secrets.SERVER_IP }}:/var/www/html/react-app || exit 1
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "sudo systemctl restart apache2 || exit 1"

@@ -31,6 +31,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+      - name: Fix target directory permissions (if necessary)
+        run: "sudo chown -R ubuntu:ubuntu $TARGET_DIRECTORY"
+
       - name: Deploy to EC2
         run: |
           rsync -avz --delete build/ ubuntu@${{ secrets.SERVER_IP }}:/var/www/html/hello-world-app || exit 1

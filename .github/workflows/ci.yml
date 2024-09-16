@@ -32,13 +32,13 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Fix target directory permissions (if necessary)
-        run: sudo chown -R www-data:www-data /var/www/html/hello-world-app
+        run: sudo chown -R ubuntu:ubuntu /var/www/html/react-app
         
       - name: update permissions
-        run: sudo chmod -R 755 /var/www/html/hello-world-app
+        run: sudo chmod -R 755 /var/www/html/react-app
 
 
       - name: Deploy to EC2
         run: |
-          rsync -avz --delete build/ ubuntu@${{ secrets.SERVER_IP }}:/var/www/html/hello-world-app || exit 1
+          rsync -avz --delete build/ ubuntu@${{ secrets.SERVER_IP }}:/var/www/html/react-app || exit 1
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_IP }} "sudo systemctl restart apache2 || exit 1"

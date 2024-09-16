@@ -32,7 +32,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Fix target directory permissions (if necessary)
-        run: "sudo chown -R ubuntu:ubuntu $TARGET_DIRECTORY"
+        run: sudo chown -R ubuntu:ubuntu /var/www/html/hello-world-app
 
       - name: Deploy to EC2
         run: |
